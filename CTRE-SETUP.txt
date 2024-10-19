@@ -1,0 +1,65 @@
+1. Open Phoenix Tuner X version 2024.9.1.0
+
+2. Ensure connection to robot through ethernet or radio
+
+3. Open Phoenix Tuner sandwich menu, in `Enter a Team # or IP` at the bottom left, complete one of the following:
+	a. If connected through ethernet select roboRIO USB
+	b. If connected through radio select Driver Station, replace `Driver Station` with `157`
+
+4. Click `Run temporary diagnostic` at the top middle, in the sandwich menu select the devices tab
+
+5. Devices should appear, if any are red or yellow complete the following:
+	a. If yellow do a non-critical firmware update
+	b. If Red complete one or more of the following:
+		I. Do a critical firmware update if prompted
+		II. Change ID's to non-conflicting numbers if prompted
+
+6. Determine front of the robot
+
+7. Click each CANCoder and click the blink button until you find the one for the front right swerve pod, set it's ID to `1`, set it's name to `frontRight`
+
+8. Click each motor and click the blink button until you find the one for the front right swerve pod drive motor, set it's ID to `2`, set it's name to `frontRightDrive`
+
+9. Click each motor and click the blink button until you find the one for the front right swerve pod angle motor, set it's ID to `3`, set it's name to `frontRightAngle`
+
+10. Repeat steps 7-9 for the back right (ID's 4, 5, 6), back left (ID's 7, 8, 9), front left (ID's 10, 11, 12)
+
+11. Click on the pigeon 2, set it's ID to `13`
+
+12. For each device, click the `LIC` button, click `activate a new license`, click on the available license, click `Activate Selected License`, the `LIC` button will change to `PRO`
+
+13. Open the sandwich menu and click on the `Mechanisms` tab
+
+14. Ensure that all values are correct, for the test frame the wheel radius was `1.92`, the FR to FL was `18.5`, the FL to BL was `18.5`, the swerve type was `SDS MK4`, and the gear ratio was `L3`
+
+15. Select `frontLeftAngle` for the turning motor
+
+16. Select `frontLeftDrive` for the drive motor
+
+17. Select `frontLeft` for the encoder
+
+18. Click on `validate configuration` 
+
+19. Ensure driver station is open and the robot is enabled
+
+20. Click `start azimuth test` and wait for it to complete
+
+21. Click `start drive test` and wait for it to complete
+
+22. Disable the robot
+
+23. Close menu and click `configure offsets`
+
+24. Follow steps shown, skip the instruction to insert bolts
+
+25. Select the next module
+
+26. Repeat steps 15-25 replacing `front left` with `back left`
+
+27. Repeat step 26 with `front right` and then `back right`
+
+28. Follow verification steps
+
+29. Click on `Generate Project`, enter team number (157)
+
+30. Select desired destination for the project. NOTE: Will not generate a new folder to put everything in. You must make a new folder
