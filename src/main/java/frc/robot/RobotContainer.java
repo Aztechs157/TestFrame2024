@@ -4,6 +4,10 @@
 
 package frc.robot;
 
+import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.ctre.phoenix6.Utils;
 import edu.wpi.first.math.MathUtil;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
@@ -20,20 +24,24 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.subsystems.Constants.ControllerConstants;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.LoggingSystem;
 
 public class RobotContainer {
   private double MaxSpeed = TunerConstants.kSpeedAt12VoltsMps; // kSpeedAt12VoltsMps desired top speed
   private double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
+  private Map<String,Subsystem> SystemMap = new HashMap<String, Subsystem>();
 
   /* Setting up bindings for necessary control of the swerve drive platform */
   private final CommandXboxController joystick = new CommandXboxController(0); // My joystick
   private final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain; // My drivetrain
+  {SystemMap.put("Drive",drivetrain);}
+  private final LoggingSystem loggingSystem = new LoggingSystem(SystemMap);
   private final SendableChooser<Command> autoChooser;
-  private final GenericEntry loggingChooser;
 
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
       .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
@@ -79,11 +87,8 @@ public class RobotContainer {
     configureBindings();
 
     autoChooser = AutoBuilder.buildAutoChooser("NothingAuto");
-    loggingChooser = Shuffleboard.getTab("Logging").add("Enable Logging", false).getEntry();
-
+    
     SmartDashboard.putData("Auto Chooser", autoChooser);
-    SmartDashboard.putBoolean("Logging Chooser", false);
-
   }
 
       /**
@@ -95,8 +100,5 @@ public class RobotContainer {
       // An example command will be run in autonomous
       return autoChooser.getSelected();
   }
-  public boolean getLoggingFlag() {
-    // An example command will be run in autonomous
-    return loggingChooser.getBoolean(false); // TODO: Actually use this value
-}
+  
 }

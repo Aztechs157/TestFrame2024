@@ -12,4 +12,9 @@ public class Constants {
         public static final double RIGHT_X_DEADBAND = 0.1;
     }
 
+    public static class LoggingConstants {
+    
+        public static final boolean DEFAULT_LOGGING_STATE = false;
+    }
+
 }
