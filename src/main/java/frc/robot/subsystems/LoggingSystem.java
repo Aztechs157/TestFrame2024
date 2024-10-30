@@ -54,7 +54,7 @@ public class LoggingSystem extends SubsystemBase {
     } 
     if (loggingState){
       var pose = ((CommandSwerveDrivetrain)subsystemArray.get(new String("Drive"))).getState().Pose;
-      SignalLogger.writeDoubleArray("odometry", new double[] {pose.getX(), pose.getY(), pose.getRotation().getDegrees()});
+      var status = SignalLogger.writeDoubleArray("odometry", new double[] {pose.getX(), pose.getY(), pose.getRotation().getDegrees()});
     }
   }
 }
