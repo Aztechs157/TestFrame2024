@@ -8,6 +8,7 @@ import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.ctre.phoenix6.Orchestra;
 import com.ctre.phoenix6.Utils;
 import edu.wpi.first.math.MathUtil;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
@@ -57,6 +58,8 @@ public class RobotContainer {
   private final SlewRateLimiter yLimiter = new SlewRateLimiter(3);
   private final SlewRateLimiter rotLimiter = new SlewRateLimiter(1570);
 
+  private Orchestra soundSystem = new Orchestra();
+
   private void configureBindings() {
     drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
         drivetrain.applyRequest(() -> drive.withVelocityX(-yLimiter.calculate(MathUtil.applyDeadband(joystick.getLeftY(),
@@ -77,6 +80,10 @@ public class RobotContainer {
     // reset the field-centric heading on left bumper press
     joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
 
+    joystick.start().onTrue(drivetrain.runOnce(()-> {soundSystem.play();}));
+    joystick.back().onTrue(drivetrain.runOnce(()->{soundSystem.pause();}));
+    joystick.y().onTrue(drivetrain.runOnce(()->{soundSystem.stop();}));
+
     if (Utils.isSimulation()) {
       drivetrain.seedFieldRelative(new Pose2d(new Translation2d(), Rotation2d.fromDegrees(90)));
     }
@@ -89,6 +96,11 @@ public class RobotContainer {
     autoChooser = AutoBuilder.buildAutoChooser("NothingAuto");
     
     SmartDashboard.putData("Auto Chooser", autoChooser);
+    for(int i = 0; i<4;i++){
+      soundSystem.addInstrument(drivetrain.getModule(i).getDriveMotor(), 0);
+      soundSystem.addInstrument(drivetrain.getModule(i).getSteerMotor(), 1);
+    }
+    soundSystem.loadMusic("music/super_mario.chrp");
   }
 
       /**
