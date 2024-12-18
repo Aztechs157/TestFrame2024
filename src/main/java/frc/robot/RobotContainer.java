@@ -8,6 +8,8 @@ import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.assabet.aztechs157.input.layouts.Layout;
+
 import com.ctre.phoenix6.Orchestra;
 import com.ctre.phoenix6.Utils;
 import edu.wpi.first.math.MathUtil;
@@ -26,11 +28,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import frc.robot.subsystems.Constants.ControllerConstants;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants.ControllerConstants;
+import frc.robot.data.LoggingSystem;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.LoggingSystem;
+import frc.robot.subsystems.DriveSystem;
 
 public class RobotContainer {
   private double MaxSpeed = TunerConstants.kSpeedAt12VoltsMps; // kSpeedAt12VoltsMps desired top speed
@@ -39,8 +41,9 @@ public class RobotContainer {
 
   /* Setting up bindings for necessary control of the swerve drive platform */
   private final CommandXboxController joystick = new CommandXboxController(0); // My joystick
-  private final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain; // My drivetrain
+  private final DriveSystem drivetrain = TunerConstants.DriveTrain; // My drivetrain
   {SystemMap.put("Drive",drivetrain);}
+  private final Layout inputs = Inputs.createFromChooser();
   private final LoggingSystem loggingSystem = new LoggingSystem(SystemMap);
   private final SendableChooser<Command> autoChooser;
 
@@ -63,10 +66,10 @@ public class RobotContainer {
   private void configureBindings() {
     drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
         drivetrain.applyRequest(() -> drive.withVelocityX(-yLimiter.calculate(MathUtil.applyDeadband(joystick.getLeftY(),
-                        ControllerConstants.LEFT_Y_DEADBAND) * MaxSpeed)) // Drive forward with
+                        ControllerConstants.LEFT_Y_DEADBAND) * modifySpeed(MaxSpeed))) // Drive forward with
                                                                                            // negative Y (forward)
             .withVelocityY(-xLimiter.calculate(MathUtil.applyDeadband(joystick.getLeftX(),
-                        ControllerConstants.LEFT_X_DEADBAND) * MaxSpeed)) // Drive left with negative X (left)
+                        ControllerConstants.LEFT_X_DEADBAND) * modifySpeed(MaxSpeed))) // Drive left with negative X (left)
             .withRotationalRate(-rotLimiter.calculate(MathUtil.applyDeadband(joystick.getRightX(),
                         ControllerConstants.RIGHT_X_DEADBAND) * MaxAngularRate)) // Drive counterclockwise with negative X (left)
         ));
@@ -74,8 +77,8 @@ public class RobotContainer {
     joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
     joystick.b().whileTrue(drivetrain
         .applyRequest(() -> point.withModuleDirection(new Rotation2d(-MathUtil.applyDeadband(joystick.getLeftY(),
-                        ControllerConstants.LEFT_Y_DEADBAND), -MathUtil.applyDeadband(joystick.getLeftX(),
-                        ControllerConstants.LEFT_X_DEADBAND)))));
+                        ControllerConstants.LEFT_Y_DEADBAND) * modifySpeed(MaxSpeed), -MathUtil.applyDeadband(joystick.getLeftX(),
+                        ControllerConstants.LEFT_X_DEADBAND) * modifySpeed(MaxSpeed)))));
 
     // reset the field-centric heading on left bumper press
     joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
@@ -90,6 +93,11 @@ public class RobotContainer {
     drivetrain.registerTelemetry(logger::telemeterize);
   }
 
+  public double modifySpeed(final double speed) {
+    final var modifier = 1 - inputs.axis(Inputs.precisionDrive).get();
+    return speed * modifier;
+}
+
   public RobotContainer() {
     configureBindings();
 
@@ -100,7 +108,7 @@ public class RobotContainer {
       soundSystem.addInstrument(drivetrain.getModule(i).getDriveMotor(), 0);
       soundSystem.addInstrument(drivetrain.getModule(i).getSteerMotor(), 1);
     }
-    soundSystem.loadMusic("music/super_mario.chrp");
+    soundSystem.loadMusic("music/e1m1.chrp");
   }
 
       /**
