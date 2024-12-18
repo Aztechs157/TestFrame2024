@@ -57,8 +57,8 @@ public class RobotContainer {
   private final Telemetry logger = new Telemetry(MaxSpeed);
 
   // Slew Rate Limiters to limit acceleration of joystick inputs
-  private final SlewRateLimiter xLimiter = new SlewRateLimiter(3);
-  private final SlewRateLimiter yLimiter = new SlewRateLimiter(3);
+  private final SlewRateLimiter xLimiter = new SlewRateLimiter(25);
+  private final SlewRateLimiter yLimiter = new SlewRateLimiter(25);
   private final SlewRateLimiter rotLimiter = new SlewRateLimiter(1570);
 
   private Orchestra soundSystem = new Orchestra();
